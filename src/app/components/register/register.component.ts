@@ -1,4 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { AuthService } from '../../services/auth.service';
+import { FlashMessagesService } from 'angular2-flash-messages';
+import { Router } from '@angular/router';
+import { auth } from 'firebase/app';
 
 @Component({
   selector: 'app-register',
@@ -7,9 +11,22 @@ import { Component, OnInit } from '@angular/core';
 })
 export class RegisterComponent implements OnInit {
 
-  constructor() { }
+  email: string;
+  password: string;
+  constructor(private authService: AuthService, private router: Router, private flassMessage: FlashMessagesService) { }
+
 
   ngOnInit() {
   }
 
+  onSubmit() {
+    this.authService.register(this.email,this.password).then(
+      res => {
+        this.flassMessage.show('You are now registered and logged in',{cssClass:'alert-success', timeout: 4000});
+        this.router.navigate(['/']);
+      })
+      .catch(err => {
+        this.flassMessage.show(err.message,{cssClass:'alert-danger', timeout: 4000});
+      });
+  }
 }
